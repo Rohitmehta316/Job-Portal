@@ -4,6 +4,13 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
+const cookieOptions = {
+    maxAge: 1 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "none",
+    secure: true
+};
+
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;
@@ -106,11 +113,7 @@ export const login = async (req, res) => {
 
         return res
             .status(200)
-            .cookie("token", token, {
-                maxAge: 1 * 24 * 60 * 60 * 1000,
-                httpOnly: true,
-                sameSite: "strict"
-            })
+            .cookie("token", token, cookieOptions)
             .json({
                 message: `Welcome back ${user.fullname}`,
                 user,
@@ -127,10 +130,18 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-            message: "Logged out successfully.",
-            success: true
-        });
+        return res
+            .status(200)
+            .cookie("token", "", {
+                maxAge: 0,
+                httpOnly: true,
+                sameSite: "none",
+                secure: true
+            })
+            .json({
+                message: "Logged out successfully.",
+                success: true
+            });
     } catch (error) {
         console.error("Logout error:", error);
         return res.status(500).json({
