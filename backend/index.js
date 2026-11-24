@@ -19,7 +19,8 @@ app.use(cookieParser());
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    "https://job-portal-1-8wyl.onrender.com"
 ];
 
 const corsOptions = {
