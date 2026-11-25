@@ -17,26 +17,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "https://job-portal-1-8wyl.onrender.com"
-];
-
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(null, false);
-        }
-    },
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://job-portal-1-8wyl.onrender.com"
+    ],
     credentials: true
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-};
-
-app.use(cors(corsOptions));
+}));
 
 const PORT = process.env.PORT || 8000;
 
@@ -46,7 +34,7 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
-// global error handler (taaki koi unhandled error request ko hang na kare)
+// global error handler
 app.use((err, req, res, next) => {
     console.error("Unhandled Server Error:", err);
     res.status(err.status || 500).json({
